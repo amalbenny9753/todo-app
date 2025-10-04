@@ -23,7 +23,10 @@ app.set("layout", "layout");
 // ✅ Connect MongoDB
 (async () => {
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/notesApp");
+    await mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
     console.log("✅ MongoDB connected");
     
     // Start push notification reminder scheduler
@@ -45,7 +48,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({
-    mongoUrl: process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/notesApp",
+    mongoUrl: process.env.MONGODB_URI,
     collectionName: "sessions"
   }),
   cookie: {
