@@ -48,7 +48,6 @@ router.post("/unsubscribe", isAuth, async (req, res) => {
     
     res.json({ success: true, message: 'Unsubscribed from notifications' });
   } catch (error) {
-    console.error('Error unsubscribing:', error);
     res.status(500).json({ error: 'Failed to unsubscribe' });
   }
 });

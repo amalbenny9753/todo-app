@@ -91,12 +91,10 @@ router.get("/forgot-password", (req, res) => {
 // Forgot Password - Step 2: Send OTP
 router.post("/forgot-password", async (req, res) => {
   try {
-    console.log("Forgot password request:", req.body);
     const { email } = req.body;
     
     // Find user
     const user = await User.findOne({ email });
-    console.log("User found:", user ? "Yes" : "No");
     if (!user) {
       req.session.errorMessage = "No account found with this email address.";
       return res.redirect("/forgot-password");
@@ -108,12 +106,9 @@ router.post("/forgot-password", async (req, res) => {
     user.resetPasswordOTPExpires = Date.now() + 10 * 60 * 1000;
     
     await user.save();
-    console.log("OTP saved for user:", otp);
     
     // Send OTP email
-    console.log("Attempting to send email to:", email);
     const emailSent = await sendOTPEmail(email, otp);
-    console.log("Email sent result:", emailSent);
     
     if (!emailSent) {
       req.session.errorMessage = "Failed to send OTP email. Please try again.";
@@ -123,11 +118,9 @@ router.post("/forgot-password", async (req, res) => {
     // Store email in session for verification
     req.session.resetEmail = email;
     req.session.successMessage = "OTP sent to your email address!";
-    console.log("Success! Redirecting to /verify-otp");
     res.redirect("/verify-otp");
     
   } catch (error) {
-    console.error("Forgot password error:", error);
     req.session.errorMessage = "An error occurred. Please try again.";
     console.log("Error occurred, redirecting back to /forgot-password");
     res.redirect("/forgot-password");
@@ -175,7 +168,6 @@ router.post("/verify-otp", async (req, res) => {
     res.redirect("/reset-password");
     
   } catch (error) {
-    console.error("OTP verification error:", error);
     req.session.errorMessage = "An error occurred. Please try again.";
     res.redirect("/verify-otp");
   }
@@ -238,7 +230,6 @@ router.post("/reset-password", async (req, res) => {
     res.redirect("/login");
     
   } catch (error) {
-    console.error("Reset password error:", error);
     req.session.errorMessage = "An error occurred. Please try again.";
     res.redirect("/reset-password");
   }

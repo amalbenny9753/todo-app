@@ -7,7 +7,6 @@ async function initializeNotifications() {
   try {
     // Register service worker
     const registration = await navigator.serviceWorker.register('/service-worker.js');
-    console.log('Service Worker registered');
     
     // Check notification permission
     const permission = await Notification.requestPermission();

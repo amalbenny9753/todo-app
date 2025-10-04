@@ -73,7 +73,6 @@ router.get("/notes", isAuth, async (req, res) => {
       currentSort: sort || 'newest'
     });
   } catch (error) {
-    console.error('Error fetching notes:', error);
     res.render("notes", { 
       user: req.session.user, 
       notes: [], 
@@ -114,7 +113,6 @@ router.post("/notes", isAuth, async (req, res) => {
     
     res.redirect("/notes");
   } catch (error) {
-    console.error('Error creating note:', error);
     res.render("newNote", { 
       error: "Failed to create note",
       formData: req.body
@@ -138,7 +136,6 @@ router.get("/notes/edit/:id", isAuth, async (req, res) => {
     
     res.render("editNote", { note });
   } catch (error) {
-    console.error('Error fetching note for edit:', error);
     res.status(500).render("error", { 
       message: "Failed to load note" 
     });
@@ -182,7 +179,6 @@ router.post("/notes/edit/:id", isAuth, async (req, res) => {
 
     res.redirect("/notes");
   } catch (error) {
-    console.error('Error updating note:', error);
     const note = await Note.findOne({ 
       _id: req.params.id, 
       userId: req.session.user.id 
@@ -210,7 +206,6 @@ router.post("/notes/delete/:id", isAuth, async (req, res) => {
 
     res.redirect("/notes");
   } catch (error) {
-    console.error('Error deleting note:', error);
     res.status(500).render("error", { 
       message: "Failed to delete note" 
     });
