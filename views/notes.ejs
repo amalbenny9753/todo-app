@@ -80,3 +80,32 @@
     <% }) %>
   <% } %>
 </ul>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add event listener to all delete forms
+    document.querySelectorAll('form[action*="/notes/delete/"]').forEach(form => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent immediate form submission
+        
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "This task will be permanently deleted!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel',
+          background: '#fff',
+          iconColor: '#d33'
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // If confirmed, submit the form
+            this.submit();
+          }
+        });
+      });
+    });
+  });
+</script>

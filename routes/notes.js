@@ -11,12 +11,6 @@ function isAuth(req, res, next) {
   next();
 }
 
-// Show all notes
-// router.get("/notes", isAuth, async (req, res) => {
-//   const notes = await Note.find({ userId: req.session.user.id }).sort({ createdAt: -1 });
-//   res.render("notes", { user: req.session.user, notes });
-// });
-
 // Show all notes (Handles Search, Filter, and Sort)
 router.get("/notes", isAuth, async (req, res) => {
   const { search, category, sort } = req.query; // Get parameters
