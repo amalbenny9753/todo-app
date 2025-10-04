@@ -46,8 +46,7 @@ router.get("/notes", isAuth, async (req, res) => {
   } else if (sort === 'priority') {
     // Sort by custom priority order (High > Medium > Low)
     sortOptions = { 
-        priority: -1, // High is usually first, so -1 if you store 'High' as the highest value
-        createdAt: -1
+        priority: { $meta: "textScore" }
     };
   }
 

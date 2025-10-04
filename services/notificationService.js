@@ -34,17 +34,18 @@ export async function sendNotification(subscription, payload) {
 // Function to check and send due date reminders
 export async function checkDueDateReminders() {
   try {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // const today = new Date();
+    // today.setHours(0, 0, 0, 0);
     
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
+    // const tomorrow = new Date(today);
+    // tomorrow.setDate(tomorrow.getDate() + 1);
+    const upcoming = new Date(today);
+upcoming.setDate(today.getDate() + 2); // today + tomorrow
     // Find notes due today or tomorrow
     const dueNotes = await Note.find({
       dueDate: {
         $gte: today,
-        $lt: tomorrow
+        $lt: upcoming
       }
     }).populate('userId');
     

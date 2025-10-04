@@ -23,10 +23,7 @@ app.set("layout", "layout");
 // ✅ Connect MongoDB
 (async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+    await mongoose.connect(process.env.MONGODB_URI);
     console.log("✅ MongoDB connected");
     
     // Start push notification reminder scheduler
@@ -40,7 +37,6 @@ app.set("layout", "layout");
 app.use(express.json());  
 app.use(express.urlencoded({ extended: true }));  
 app.use(express.static(path.join(__dirname, "public")));
-app.set("view engine", "ejs");
 
 // ✅ Session
 app.use(session({
@@ -54,7 +50,7 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60,
     httpOnly: true,
-    secure: false
+    secure: process.env.NODE_ENV === "production"
   }
 }));
 
