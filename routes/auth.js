@@ -49,7 +49,14 @@ router.post("/login", async (req, res) => {
     if (!match) return res.send("Wrong password");
 
     req.session.user = { id: user._id, email: user.email };
-    res.redirect("/");
+        req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.send("Session error: " + err.message);
+      }
+      console.log("Session saved successfully");
+      res.redirect("/");
+    });
   } catch (err) {
     console.error(err);
     res.send("Error logging in");

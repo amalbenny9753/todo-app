@@ -48,9 +48,11 @@ app.use(session({
     collectionName: "sessions"
   }),
   cookie: {
-    maxAge: 1000 * 60 * 60,
+    maxAge: 1000 * 60 * 60 * 24,
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production"
+    // secure: process.env.NODE_ENV === "production"
+    secure: false, // Change this to false temporarily
+    sameSite: 'lax' // Change from 'none' to 'lax'
   }
 }));
 
