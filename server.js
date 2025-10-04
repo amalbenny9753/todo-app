@@ -81,6 +81,41 @@ app.get("/test-email", async (req, res) => {
   }
 });
 
+// Debug routes 
+app.get("/debug-auth", (req, res) => {
+  res.send(`
+    <h2>Auth Routes Debug</h2>
+    <ul>
+      <li><a href="/forgot-password">/forgot-password (GET)</a></li>
+      <li><a href="/verify-otp">/verify-otp (GET)</a></li>
+      <li><a href="/reset-password">/reset-password (GET)</a></li>
+      <li><a href="/login">/login (GET)</a></li>
+      <li><a href="/signup">/signup (GET)</a></li>
+    </ul>
+    <h3>Test Links</h3>
+    <ul>
+      <li><a href="/">Home</a></li>
+      <li><a href="/notes">Notes</a></li>
+    </ul>
+  `);
+});
+
+// Test if auth routes are loaded
+app.get("/check-auth-routes", (req, res) => {
+  const routes = [
+    '/forgot-password',
+    '/verify-otp', 
+    '/reset-password',
+    '/login',
+    '/signup'
+  ];
+  
+  res.json({
+    message: "Auth routes should be available",
+    routes: routes
+  });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
