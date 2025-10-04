@@ -91,10 +91,12 @@ router.get("/forgot-password", (req, res) => {
 // Forgot Password - Step 2: Send OTP
 router.post("/forgot-password", async (req, res) => {
   try {
+    console.log("Forgot password request:", req.body);
     const { email } = req.body;
     
     // Find user
     const user = await User.findOne({ email });
+    console.log("User found:", user ? "Yes" : "No");
     if (!user) {
       req.session.errorMessage = "No account found with this email address.";
       return res.redirect("/forgot-password");
@@ -103,12 +105,15 @@ router.post("/forgot-password", async (req, res) => {
     // Generate OTP and set expiration (10 minutes)
     const otp = generateOTP();
     user.resetPasswordOTP = otp;
-    user.resetPasswordOTPExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+    user.resetPasswordOTPExpires = Date.now() + 10 * 60 * 1000;
     
     await user.save();
+    console.log("OTP saved for user:", otp);
     
     // Send OTP email
+    console.log("Attempting to send email to:", email);
     const emailSent = await sendOTPEmail(email, otp);
+    console.log("Email sent result:", emailSent);
     
     if (!emailSent) {
       req.session.errorMessage = "Failed to send OTP email. Please try again.";
@@ -118,11 +123,13 @@ router.post("/forgot-password", async (req, res) => {
     // Store email in session for verification
     req.session.resetEmail = email;
     req.session.successMessage = "OTP sent to your email address!";
+    console.log("Success! Redirecting to /verify-otp");
     res.redirect("/verify-otp");
     
   } catch (error) {
     console.error("Forgot password error:", error);
     req.session.errorMessage = "An error occurred. Please try again.";
+    console.log("Error occurred, redirecting back to /forgot-password");
     res.redirect("/forgot-password");
   }
 });
@@ -236,5 +243,17 @@ router.post("/reset-password", async (req, res) => {
     res.redirect("/reset-password");
   }
 })
+
+// Add this temporary test route
+router.get("/test-email/:email", async (req, res) => {
+  try {
+    const { sendOTPEmail } = await import('../services/emailService.js');
+    const email = req.params.email;
+    const success = await sendOTPEmail(email, "123456");
+    res.send(`Email test to ${email}: ${success ? "SUCCESS" : "FAILED"}`);
+  } catch (error) {
+    res.send(`Email error: ${error.message}`);
+  }
+});
 
 export default router;

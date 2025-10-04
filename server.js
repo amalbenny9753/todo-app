@@ -70,6 +70,17 @@ app.get("/", (req, res) => {
   res.render("index", { user: req.session.user || null });
 });
 
+// Test email route - add this temporarily
+app.get("/test-email", async (req, res) => {
+  try {
+    const { sendOTPEmail } = await import('./services/emailService.js');
+    const success = await sendOTPEmail("test@example.com", "123456");
+    res.send(`Email test: ${success ? "Success" : "Failed"}`);
+  } catch (error) {
+    res.send(`Email error: ${error.message}`);
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
