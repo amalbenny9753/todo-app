@@ -1,0 +1,81 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2>My To-Do List / Notes</h2>
+  <div>
+    <span class="me-3">Welcome, <%= user.email %></span>
+    <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+  </div>
+</div>
+
+<a href="/notes/new" class="btn btn-success mb-3">+ Add New Task</a>
+
+<form method="GET" action="/notes" class="mb-4 p-3 border rounded shadow-sm bg-light">
+  <div class="row g-3 align-items-end">
+    
+    <div class="col-md-5 col-sm-12">
+      <label class="form-label visually-hidden">Search</label>
+      <input type="search" name="search" class="form-control" placeholder="Search title or description..." 
+             value="<%= currentSearch %>">
+    </div>
+    
+    <div class="col-md-3 col-sm-6">
+      <label for="category-select" class="form-label">Category</label>
+      <select name="category" id="category-select" class="form-select">
+        <option value="All" <%= currentCategory === 'All' ? 'selected' : '' %>>All Categories</option>
+        <option value="General" <%= currentCategory === 'General' ? 'selected' : '' %>>General</option>
+        <option value="Work" <%= currentCategory === 'Work' ? 'selected' : '' %>>Work</option>
+        <option value="Personal" <%= currentCategory === 'Personal' ? 'selected' : '' %>>Personal</option>
+        </select>
+    </div>
+    
+    <div class="col-md-3 col-sm-6">
+      <label for="sort-select" class="form-label">Sort By</label>
+      <select name="sort" id="sort-select" class="form-select">
+        <option value="newest" <%= currentSort === 'newest' ? 'selected' : '' %>>Newest First</option>
+        <option value="date" <%= currentSort === 'date' ? 'selected' : '' %>>Due Date (Nearest)</option>
+        <option value="priority" <%= currentSort === 'priority' ? 'selected' : '' %>>Priority (High First)</option>
+      </select>
+    </div>
+    
+    <div class="col-md-1 col-sm-12">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+  </div>
+</form>
+<ul class="list-group mt-4">
+  <% if (notes.length === 0) { %>
+    <li class="list-group-item list-group-item-info">No notes found matching your criteria.</li>
+  <% } else { %>
+    <% notes.forEach(note => { %>
+      <li class="list-group-item d-flex justify-content-between align-items-start p-3">
+        <div class="me-auto">
+          <b><%= note.title %></b>
+          
+          <div class="mt-1 d-flex gap-3 flex-wrap">
+            <span class="badge bg-secondary"><%= note.category %></span>
+            <span class="badge 
+              <% if (note.priority === 'High') { %>bg-danger
+              <% } else if (note.priority === 'Medium') { %>bg-warning text-dark
+              <% } else { %>bg-success
+              <% } %>
+            "><%= note.priority %> Priority</span>
+            
+            <% if (note.dueDate) { %>
+              <span class="badge bg-primary">
+                Due: <%= note.dueDate.toLocaleDateString() %>
+              </span>
+            <% } %>
+          </div>
+          
+          <p class="mt-2 mb-0 text-muted"><%= note.description %></p>
+        </div>
+        
+                <div class="d-flex align-items-center gap-2">
+          <a href="/notes/edit/<%= note._id %>" class="btn btn-sm btn-warning">Edit</a>
+          <form method="POST" action="/notes/delete/<%= note._id %>" style="display:inline">
+            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  <% } %>
+</ul>

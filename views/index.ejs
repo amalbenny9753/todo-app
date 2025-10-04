@@ -1,0 +1,11 @@
+
+<h1 class="mb-4">Welcome to Notes App</h1>
+
+<% if (user) { %>
+  <p>Hello <%= user.email %></p>
+  <a href="/notes" class="btn btn-primary">Go to My Notes</a>
+  <a href="/logout" class="btn btn-outline-danger">Logout</a>
+<% } else { %>
+  <a href="/login" class="btn btn-success">Login</a>
+  <a href="/signup" class="btn btn-secondary">Signup</a>
+<% } %>
