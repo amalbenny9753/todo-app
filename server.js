@@ -9,7 +9,6 @@ import authRoutes from "./routes/auth.js";
 import notesRoutes from "./routes/notes.js";
 import notificationRoutes from "./routes/notifications.js";
 import expressLayouts from "express-ejs-layouts";
-import { startReminderScheduler } from "./services/notificationService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,8 +25,14 @@ app.set("layout", "layout");
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("✅ MongoDB connected");
     
-    // Start push notification reminder scheduler
-    startReminderScheduler();
+       // Start push notification reminder scheduler with error handling
+    try {
+      const { startReminderScheduler } = await import('./services/notificationService.js');
+      startReminderScheduler();
+    } catch (error) {
+      console.log('⚠️ Notification scheduler not started (OK for now)');
+    }
+    
   } catch (err) {
     console.error("❌ DB Connection Error:", err);
   }
@@ -113,6 +118,25 @@ app.get("/check-files", (req, res) => {
     </ul>
     <p>Both links should open JavaScript files. If you get 404, files are missing.</p>
   `);
+});
+
+// Add this test route to server.js
+app.get("/test-email", async (req, res) => {
+  try {
+    const { sendOTPEmail } = await import('./services/emailService.js');
+    const testEmail = "amalbenny851@gmail.com"; 
+    const testOTP = "123456";
+    
+    const success = await sendOTPEmail(testEmail, testOTP);
+    
+    if (success) {
+      res.send("✅ Test email sent successfully! Check your inbox.");
+    } else {
+      res.send("❌ Failed to send test email.");
+    }
+  } catch (error) {
+    res.send(`❌ Error: ${error.message}`);
+  }
 });
 
 app.listen(PORT, '0.0.0.0', () => {
