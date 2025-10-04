@@ -16,18 +16,27 @@ router.post("/signup", async (req, res) => {
     const hashed = await bcrypt.hash(password, 10);
     const user = new User({ email, password: hashed });
     await user.save();
-    req.session.user = { id: user._id, email: user.email };
-    res.redirect("/");
+    req.session.successMessage = "Signed up successfully!, Please login.";
+    res.redirect("/login");
   } catch (err) {
     console.error(err);
-    res.send("Error signing up");
+    req.session.errorMessage = "Signup failed. Try again.";
+    res.redirect("/signup");
   }
 });
 
 // Login (GET form)
 router.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login", {
+    successMessage: req.session.successMessage || null,
+    errorMessage: req.session.errorMessage || null
+  });
+
+  // clear messages after showing them
+  req.session.successMessage = null;
+  req.session.errorMessage = null;
 });
+
 
 // Login (POST data)
 router.post("/login", async (req, res) => {

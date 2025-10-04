@@ -65,6 +65,54 @@ app.get("/", (req, res) => {
 
 // Start server on all network interfaces
 const PORT = process.env.PORT || 3000;
+
+
+// Add before app.listen()
+app.get("/test-notification", async (req, res) => {
+  if (!req.session.user) {
+    return res.send("Please login first");
+  }
+  
+  try {
+    const User = (await import('./models/User.js')).default;
+    const user = await User.findById(req.session.user.id);
+    
+    if (!user.pushSubscription) {
+      return res.send(`
+        <h2>No subscription found</h2>
+        <p>Please go to <a href="/notes">Notes page</a> and click "Enable Notifications"</p>
+      `);
+    }
+    
+    const { sendNotification } = await import('./services/notificationService.js');
+    
+    await sendNotification(user.pushSubscription, {
+      title: '🔔 Test Notification',
+      body: 'If you see this, notifications are working!',
+      data: { url: '/notes' }
+    });
+    
+    res.send(`
+      <h2>✅ Test notification sent!</h2>
+      <p>Check your browser/phone for the notification.</p>
+      <p><a href="/notes">Back to Notes</a></p>
+    `);
+  } catch (error) {
+    res.send(`<h2>❌ Error:</h2><pre>${error.message}</pre>`);
+  }
+});
+
+app.get("/check-files", (req, res) => {
+  res.send(`
+    <h2>File Check</h2>
+    <ul>
+      <li><a href="/service-worker.js" target="_blank">Service Worker</a></li>
+      <li><a href="/js/notifications.js" target="_blank">Notifications JS</a></li>
+    </ul>
+    <p>Both links should open JavaScript files. If you get 404, files are missing.</p>
+  `);
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
