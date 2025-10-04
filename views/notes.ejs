@@ -1,10 +1,10 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>My To-Do List / Notes</h2>
-  <div>
-  <button id="notification-toggle" class="btn btn-primary btn-sm me-2">🔔 Enable Notifications</button>
-    <span class="me-3">Welcome, <%= user.email %></span>
-    <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
-  </div>
+  <h2>My To-Do List / Notes</h2>
+  <div>
+    <button id="notification-toggle" class="btn btn-primary btn-sm me-2">Enable Notifications</button>
+    <span class="me-3">Welcome, <%= user.email %></span>
+    <a href="/logout" class="btn btn-outline-danger btn-sm">Logout</a>
+  </div>
 </div>
 
 <a href="/notes/new" class="btn btn-success mb-3">+ Add New Task</a>
@@ -43,13 +43,13 @@
   </div>
 </form>
 <ul class="list-group mt-4">
-  <% if (notes.length === 0) { %>
-    <li class="list-group-item list-group-item-info">No notes found matching your criteria.</li>
-  <% } else { %>
-    <% notes.forEach(note => { %>
-      <li class="list-group-item d-flex justify-content-between align-items-start p-3">
-        <div class="me-auto">
-          <b><%= note.title %></b>
+  <% if (notes.length === 0) { %>
+    <li class="list-group-item list-group-item-info">No notes found matching your criteria.</li>
+  <% } else { %>
+    <% notes.forEach(note => { %>
+      <li class="list-group-item d-flex justify-content-between align-items-start p-3">
+        <div class="me-auto">
+          <b><%= note.title %></b>
           
           <div class="mt-1 d-flex gap-3 flex-wrap">
             <span class="badge bg-secondary"><%= note.category %></span>
@@ -67,18 +67,18 @@
             <% } %>
           </div>
           
-          <p class="mt-2 mb-0 text-muted"><%= note.description %></p>
-        </div>
-        
-                <div class="d-flex align-items-center gap-2">
-          <a href="/notes/edit/<%= note._id %>" class="btn btn-sm btn-warning">Edit</a>
-          <form method="POST" action="/notes/delete/<%= note._id %>" style="display:inline">
-            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
-          </form>
-        </div>
-      </li>
-    <% }) %>
-  <% } %>
+          <p class="mt-2 mb-0 text-muted"><%= note.description %></p>
+        </div>
+        
+        <div class="d-flex align-items-center gap-2">
+          <a href="/notes/edit/<%= note._id %>" class="btn btn-sm btn-warning">Edit</a>
+          <form method="POST" action="/notes/delete/<%= note._id %>" style="display:inline">
+            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </li>
+    <% }) %>
+  <% } %>
 </ul>
 
 <script>

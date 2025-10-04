@@ -1,17 +1,40 @@
 <h2 class="mb-4">Edit Note</h2>
 <form method="POST" action="/notes/edit/<%= note._id %>" class="card p-3 shadow-sm">
-  <div class="mb-3">
-    <label>Title</label>
-    <input type="text" name="title" class="form-control" value="<%= note.title %>" required>
-  </div>
-  <div class="mb-3">
-    <label>Description</label>
-    <textarea name="description" class="form-control"><%= note.description %></textarea>
-  </div>
+  <div class="mb-3">
+    <label>Title</label>
+    <input type="text" name="title" class="form-control" value="<%= note.title %>" required>
+  </div>
+  <div class="mb-3">
+    <label>Description</label>
+    <textarea name="description" class="form-control"><%= note.description %></textarea>
+  </div>
+
+  <div class="mb-3">
+    <label>Category</label>
+    <select name="category" class="form-select">
+      <option value="General" <%= note.category === 'General' ? 'selected' : '' %>>General</option>
+      <option value="Work" <%= note.category === 'Work' ? 'selected' : '' %>>Work</option>
+      <option value="Personal" <%= note.category === 'Personal' ? 'selected' : '' %>>Personal</option>
+    </select>
+  </div>
   
-    <div class="d-flex justify-content-between gap-2">
+  <div class="mb-3">
+    <label>Due Date</label>
+    <input type="date" name="dueDate" class="form-control" 
+           value="<%= note.dueDate ? note.dueDate.toISOString().split('T')[0] : '' %>">
+  </div>
+  
+  <div class="mb-3">
+    <label>Priority</label>
+    <select name="priority" class="form-select">
+      <option value="Low" <%= note.priority === 'Low' ? 'selected' : '' %>>Low</option>
+      <option value="Medium" <%= note.priority === 'Medium' ? 'selected' : '' %>>Medium</option>
+      <option value="High" <%= note.priority === 'High' ? 'selected' : '' %>>High</option>
+    </select>
+  </div>
+
+  <div class="d-flex justify-content-between gap-2">
     <a href="/notes" class="btn btn-secondary flex-grow-1">Cancel</a>
-    
-        <button type="submit" class="btn btn-warning flex-grow-1">Update Note</button>
-  </div>
+    <button type="submit" class="btn btn-warning flex-grow-1">Update Note</button>
+  </div>
 </form>

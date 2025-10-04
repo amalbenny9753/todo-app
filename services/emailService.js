@@ -25,14 +25,20 @@ export async function sendOTPEmail(email, otp) {
     });
 
     if (error) {
-      console.error('❌ Error sending OTP email:', error);
+       if (process.env.NODE_ENV !== 'production') {
+        console.error('Error sending OTP email:', error);
+      }
       return false;
     }
 
-    console.log(`✅ OTP email sent to ${email}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`OTP email sent to ${email}`);
+    }
     return true;
   } catch (error) {
-    console.error('❌ Error sending OTP email:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error sending OTP email:', error);
+    }
     return false;
   }
 }
@@ -56,14 +62,20 @@ export async function sendPasswordChangedEmail(email) {
     });
 
     if (error) {
-      console.error('❌ Error sending password changed email:', error);
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Error sending password changed email:', error);
+      }
       return false;
     }
 
-    console.log(`✅ Password changed email sent to ${email}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`Password changed email sent to ${email}`);
+    }
     return true;
   } catch (error) {
-    console.error('❌ Error sending password changed email:', error);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Error sending password changed email:', error);
+    }
     return false;
   }
 }

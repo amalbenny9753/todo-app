@@ -1,5 +1,4 @@
 import webpush from 'web-push';
-import User from '../models/User.js';
 import Note from '../models/Note.js';
 
 // Use environment variables for VAPID keys
@@ -10,13 +9,14 @@ const vapidKeys = {
 
 // Validate that keys are set
 if (!vapidKeys.publicKey || !vapidKeys.privateKey) {
-  console.error('❌ VAPID keys are not set in environment variables!');
-  console.error('Run: npx web-push generate-vapid-keys');
-  console.error('Then add them to your .env file');
+  if (process.env.NODE_ENV !== 'production') {
+    console.error('VAPID keys are not set in environment variables!');
+  }
+  // Don't exit in production, just log and continue
 }
 
 webpush.setVapidDetails(
-  process.env.VAPID_EMAIL || 'mailto:your-email@example.com',
+  process.env.VAPID_EMAIL || 'mailto:amalbenny851@gmail.com',
   vapidKeys.publicKey,
   vapidKeys.privateKey
 );
@@ -25,9 +25,13 @@ webpush.setVapidDetails(
 export async function sendNotification(subscription, payload) {
   try {
     await webpush.sendNotification(subscription, JSON.stringify(payload));
-    console.log('✅ Notification sent successfully');
+     if (process.env.NODE_ENV !== 'production') {
+      console.log('Notification sent successfully');
+    }
   } catch (error) {
-    console.error('❌ Error sending notification:', error);
+        if (error.statusCode !== 410 && error.statusCode !== 404) { // 410 = gone, 404 = not found
+      console.error('Error sending notification:', error.message);
+    }
   }
 }
 
@@ -50,10 +54,12 @@ export async function checkDueDateReminders() {
       }
     }).populate('userId');
 
+    let sentCount = 0;
+
     for (const note of dueNotes) {
-      if (note.userId.pushSubscription) {
+      if (note.userId && note.userId.pushSubscription) {
         const payload = {
-          title: '⏰ Task Reminder',
+          title: 'Task Reminder',
           body: `"${note.title}" is due soon!`,
           icon: '/icon-192x192.png',
           badge: '/badge-72x72.png',
@@ -64,12 +70,15 @@ export async function checkDueDateReminders() {
         };
 
         await sendNotification(note.userId.pushSubscription, payload);
+        sentCount++;
       }
     }
 
-    console.log(`✅ Checked ${dueNotes.length} due notes`);
+     if (process.env.NODE_ENV !== 'production' && sentCount > 0) {
+      console.log(`Sent ${sentCount} reminder notifications`);
+    }
   } catch (error) {
-    console.error('❌ Error checking reminders:', error);
+    console.error('Error checking reminders:', error.message);
   }
 }
 
@@ -81,5 +90,7 @@ export function startReminderScheduler() {
   // Then check every hour
   setInterval(checkDueDateReminders, 60 * 60 * 1000);
 
-  console.log('✅ Reminder scheduler started');
+   if (process.env.NODE_ENV !== 'production') {
+    console.log('Reminder scheduler started');
+  }
 }
