@@ -34,13 +34,14 @@ export async function sendNotification(subscription, payload) {
 // Function to check and send due date reminders
 export async function checkDueDateReminders() {
   try {
-    // const today = new Date();
-    // today.setHours(0, 0, 0, 0);
-    
-    // const tomorrow = new Date(today);
-    // tomorrow.setDate(tomorrow.getDate() + 1);
+    // Define today's start
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Define 2 days ahead
     const upcoming = new Date(today);
-upcoming.setDate(today.getDate() + 2); // today + tomorrow
+    upcoming.setDate(today.getDate() + 2);
+
     // Find notes due today or tomorrow
     const dueNotes = await Note.find({
       dueDate: {
@@ -48,12 +49,12 @@ upcoming.setDate(today.getDate() + 2); // today + tomorrow
         $lt: upcoming
       }
     }).populate('userId');
-    
+
     for (const note of dueNotes) {
       if (note.userId.pushSubscription) {
         const payload = {
           title: '⏰ Task Reminder',
-          body: `"${note.title}" is due today!`,
+          body: `"${note.title}" is due soon!`,
           icon: '/icon-192x192.png',
           badge: '/badge-72x72.png',
           data: {
@@ -61,11 +62,11 @@ upcoming.setDate(today.getDate() + 2); // today + tomorrow
             url: '/notes'
           }
         };
-        
+
         await sendNotification(note.userId.pushSubscription, payload);
       }
     }
-    
+
     console.log(`✅ Checked ${dueNotes.length} due notes`);
   } catch (error) {
     console.error('❌ Error checking reminders:', error);
@@ -76,9 +77,9 @@ upcoming.setDate(today.getDate() + 2); // today + tomorrow
 export function startReminderScheduler() {
   // Check immediately on startup
   checkDueDateReminders();
-  
+
   // Then check every hour
   setInterval(checkDueDateReminders, 60 * 60 * 1000);
-  
+
   console.log('✅ Reminder scheduler started');
 }
